@@ -8,8 +8,9 @@ per_100 <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytic
          made_2p = x2p, attempted_2p = x2pa, percentage_2p = x2p_2,
          made_ft = ft, attempted_ft = fta, percentage_ft = ft_2)
 advanced <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/2019_advanced.csv") %>%
-  clean_names()
+  clean_names() %>%
+  rename(attempt_rate_3p = x3p_ar, ft_rate = f_tr)
 shooting <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/2019_shooting.csv") %>%
-  clean_names()
+  clean_names() 
 
-head(per_100)
+
