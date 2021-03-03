@@ -19,6 +19,35 @@ shooting <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analyti
   clean_names() %>%
   select(-c(rk,pos,age,g,mp,fg))
 
+# Joining per_100, advanced, and shooting data for the 201 season
 data_2019 <- per_100 %>%
   inner_join(advanced, group_by = c("player", "tm")) %>%
   inner_join(shooting, group_by = c("player", "tm"))
+
+# Removing non-unique player entries - Basketball-reference will give multiple player entries for players who were traded
+multiple_team_player_TOT <- data_2019[data_2019$tm == "TOT",]
+multiple_team_player_names <- multiple_team_player_TOT$player
+
+unique_player_indices <- NULL
+
+num_NBA_players <- nrow(data_2019)
+
+#For each player
+for(i in 1:nrow(data_2019)){
+  #Check if they are a unique player
+  is_non_unique_player <- 0
+  for(j in 1:length(multiple_team_player_names)){
+    if(data_2019[i,]$player == multiple_team_player_names[j]){
+      is_non_unique_player <- 1
+    }
+  }
+  #Record if they are unique or not
+  if(is_non_unique_player && data_2019[i,]$tm != "TOT"){
+    unique_player_indices[i] <- FALSE
+  } else {
+    unique_player_indices[i] <- TRUE
+  }
+}
+
+# Select unique players and their full (TOT) season data
+data_2019 <- data_2019[unique_player_indices,]
