@@ -60,5 +60,15 @@ cleaned_data_2019 <- data_2019 %>%
   mutate(made_0_3 = fg_by_distance_0_3*attempts_0_3) %>%
   mutate(made_3_10 = fg_by_distance_3_10*attempts_3_10) %>%
   mutate(made_0_10 = made_0_3 + made_0_10) %>%
-  mutate(percent_0_10 = made_0_10 / attempts_0_10)  #FG% within 10ft
+  mutate(percent_0_10 = made_0_10 / attempts_0_10) %>% #FG% within 10ft
+  mutate(attempts_dunk = attempted_fg * dunks_fga) %>% #Dunk attempts per 100 possessions
+  mutate(attempts_10_16 = attempted_fg * x_of_fga_by_distance_10_16) %>%
+  mutate(attempts_16_3p = attempted_fg* x_of_fga_by_distance_16_3p) %>%
+  mutate(attempts_10_3p = attempts_0_3 + attempts_0_10) %>% #Scoring attempts between 10ft and 3P line per 100 possessions
+  mutate(made_10_16 = fg_by_distance_10_16*attempts_10_16) %>%
+  mutate(made_16_3p = fg_by_distance_16_3p*attempts_16_3p) %>%
+  mutate(made_10_3p = made_10_16 + made_16_3p) %>%
+  mutate(percent_10_3p = made_10_3p / attempts_10_3p) %>% #FG% between 10ft and 3P line
+  select(player, age, attempts_0_10, percent_0_10, attempts_dunk, x_of_fg_ast_d_2p)
+  
   
