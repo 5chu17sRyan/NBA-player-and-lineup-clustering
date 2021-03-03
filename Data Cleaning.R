@@ -69,6 +69,8 @@ cleaned_data_2019 <- data_2019 %>%
   mutate(made_16_3p = fg_by_distance_16_3p*attempts_16_3p) %>%
   mutate(made_10_3p = made_10_16 + made_16_3p) %>%
   mutate(percent_10_3p = made_10_3p / attempts_10_3p) %>% #FG% between 10ft and 3P line
-  select(player, age, attempts_0_10, percent_0_10, attempts_dunk, x_of_fg_ast_d_2p)
+  mutate(attempts_corner = attempted_3p * corner_3s_3pa) %>% #Corner 3 attempts per 100
+  select(player, age, attempts_0_10, percent_0_10, attempts_dunk, x_of_fg_ast_d_2p,
+         attempts_10_3p, percent_10_3p, attempts_corner, corner_3s_3p)
   
   
