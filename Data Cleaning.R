@@ -51,3 +51,14 @@ for(i in 1:nrow(data_2019)){
 
 # Select unique players and their full (TOT) season data
 data_2019 <- data_2019[unique_player_indices,]
+
+# Select variables of interest
+cleaned_data_2019 <- data_2019 %>%
+  mutate(attempts_0_3 = attempted_fg * x_of_fga_by_distance_0_3) %>%
+  mutate(attempts_3_10 = attempted_fg* x_of_fga_by_distance_3_10) %>%
+  mutate(attempts_0_10 = attempts_0_3 + attempts_0_10) %>% #Scoring attempts within 10ft per 100 possessions
+  mutate(made_0_3 = fg_by_distance_0_3*attempts_0_3) %>%
+  mutate(made_3_10 = fg_by_distance_3_10*attempts_3_10) %>%
+  mutate(made_0_10 = made_0_3 + made_0_10) %>%
+  mutate(percent_0_10 = made_0_10 / attempts_0_10)  #FG% within 10ft
+  
