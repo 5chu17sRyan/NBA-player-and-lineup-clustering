@@ -2,6 +2,8 @@ library(rvest)
 library(purrr)
 library(tidyverse)
 
+
+
 ##### Per 100 #####
 
 url_2019_per_100 <- "https://www.basketball-reference.com/leagues/NBA_2019_per_poss.html"
@@ -52,3 +54,14 @@ write.csv(data_advanced, "C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Ana
 #   filter(Rk != "Rk") #Some rows just re list the variable names
 # 
 # write.csv(data_shooting, "C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/2019_shooting")
+
+#trying to find height and weight
+
+player_data_url <- "https://www.nba.com/players"
+
+height_weight_data <- player_data_url %>% 
+     read_html() %>% 
+     html_nodes("table") %>%
+     purrr::pluck() %>%
+     html_table()
+hw2 <- height_weight_data[[1]]
