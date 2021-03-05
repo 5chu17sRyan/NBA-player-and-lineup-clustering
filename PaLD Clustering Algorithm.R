@@ -1,5 +1,5 @@
 getCohesionMatrix <- function(distance_matrix){
-  n=dim(distance_matrix)[1] 
+  n = dim(distance_matrix)[1] 
   A3=matrix(0,n,n)
   for(x in 1:(n-1)){
     for(y in (x+1):n){
@@ -36,4 +36,14 @@ getCohesionMatrix <- function(distance_matrix){
   colnames(A3)=1:n
   C <- A3/(n-1) #The matrix of partitioned local depths (cohesions)
   return(C)
+}
+
+
+calcCohesionThreshold <- function(cohesion_matrix){
+  diagonal_entries <- diag(cohesion_matrix)
+  avg_diag_entry <- mean(diagonal_entries)
+  
+  #Threshold for determining if two points are particularly cohesive
+  threshold <- avg_diag_entry/2
+  return(threshold)
 }
