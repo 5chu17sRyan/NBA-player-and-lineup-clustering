@@ -52,7 +52,7 @@ for(i in 1:nrow(data_2019)){
 # Select unique players and their full (TOT) season data
 data_2019 <- data_2019[unique_player_indices,]
 
-
+## NUMBER OF MADE BASKETS MAY BE NA REPLACE THEM WITH O
 
 data_2019$x_of_fga_by_distance_0_3
 str(cleaned_data_2019)
