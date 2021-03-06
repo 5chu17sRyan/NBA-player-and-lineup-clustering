@@ -1,5 +1,7 @@
-getCohesionMatrix <- function(distance_matrix){
-  n = dim(distance_matrix)[1] 
+#distance_matrix is a matrix of distances between the data points of players
+#player_names is a vector of player names which should represent the rows and columns of the distance matrix and the resulting cohesion matrix
+getCohesionMatrix <- function(distance_matrix, player_names){
+  n = dim(distance_matrix)[1] #number of players
   A3=matrix(0,n,n)
   for(x in 1:(n-1)){
     for(y in (x+1):n){
@@ -32,8 +34,8 @@ getCohesionMatrix <- function(distance_matrix){
       A3[y,conflict_points] = A3[y,conflict_points] + local_depth_y/num_conflict_points
     }
   }
-  rownames(A3)=1:n
-  colnames(A3)=1:n
+  rownames(A3)=player_names
+  colnames(A3)=player_names
   C <- A3/(n-1) #The matrix of partitioned local depths (cohesions)
   return(C)
 }
