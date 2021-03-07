@@ -53,27 +53,25 @@ for(i in 1:nrow(data_2019)){
 data_2019 <- data_2019[unique_player_indices,]
 
 ## NUMBER OF MADE BASKETS MAY BE NA REPLACE THEM WITH O
-
-data_2019$x_of_fga_by_distance_0_3
-str(cleaned_data_2019)
+view(cleaned_data_2019)
 # Select variables of interest
 cleaned_data_2019 <- data_2019 %>%
   mutate(attempts_0_3 = attempted_fg * x_of_fga_by_distance_0_3) %>%
   mutate(attempts_3_10 = attempted_fg* x_of_fga_by_distance_3_10) %>%
   mutate(attempts_0_10 = attempts_0_3 + attempts_3_10) %>% #Scoring attempts within 10ft per 100 possessions
-  mutate(made_0_3 = fg_by_distance_0_3*attempts_0_3) %>%
-  mutate(made_3_10 = fg_by_distance_3_10*attempts_3_10) %>%
+  mutate(made_0_3 = ifelse(is.na(fg_by_distance_0_3), 0, fg_by_distance_0_3*attempts_0_3) ) %>% #fg_by_distance may be NA if there were no attempts
+  mutate(made_3_10 = ifelse(is.na(fg_by_distance_3_10), 0, fg_by_distance_3_10*attempts_3_10) ) %>%
   mutate(made_0_10 = made_0_3 + made_3_10) %>%
   mutate(percent_0_10 = made_0_10 / attempts_0_10) %>% #FG% within 10ft
   mutate(attempts_dunk = attempted_fg * dunks_fga) %>% #Dunk attempts per 100 possessions
   mutate(attempts_10_16 = attempted_fg * x_of_fga_by_distance_10_16) %>%
   mutate(attempts_16_3p = attempted_fg* x_of_fga_by_distance_16_3p) %>%
   mutate(attempts_10_3p = attempts_0_3 + attempts_0_10) %>% #Scoring attempts between 10ft and 3P line per 100 possessions
-  mutate(made_10_16 = fg_by_distance_10_16*attempts_10_16) %>%
-  mutate(made_16_3p = fg_by_distance_16_3p*attempts_16_3p) %>%
+  mutate(made_10_16 = ifelse(is.na(fg_by_distance_10_16), 0, fg_by_distance_10_16*attempts_10_16) ) %>%
+  mutate(made_16_3p = ifelse(is.na(fg_by_distance_16_3p), 0, fg_by_distance_16_3p*attempts_16_3p) ) %>%
   mutate(made_10_3p = made_10_16 + made_16_3p) %>%
   mutate(percent_10_3p = made_10_3p / attempts_10_3p) %>% #FG% between 10ft and 3P line
-  mutate(attempts_corner = attempted_3p * corner_3s_3pa) %>% #Corner 3 attempts per 100
+  mutate(attempts_corner = ifelse(attempted_3p == 0, 0, attempted_3p * corner_3s_3pa) ) %>% #Corner 3 attempts per 100
   select(player, age, attempts_0_10, percent_0_10, attempts_dunk, x_of_fg_ast_d_2p,
          attempts_10_3p, percent_10_3p, attempts_corner, corner_3s_3p, attempted_3p,
          percentage_3p, x_of_fg_ast_d_3p, ft_rate, percentage_ft, ast, tov_percentage,
