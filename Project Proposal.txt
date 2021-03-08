@@ -1,0 +1,37 @@
+We plan to pursue the clustering project (clustering NBA players) using a new clustering algorithm developed by Katherine More ‘12 who recently presented at
+a Math Monday. We also plan to use Principal Component Analysis for dimensionality reduction. Furthermore, we will develop a method for determining lineup 
+similarity
+
+This measure of lineup similarity has a variety of applications: (1) Since we know the distance between lineups, we can further cluster lineups using Moore’s 
+algorithm. (2) Using player clusters as the players in a lineup information about typical lineups such as a team’s performance against a type of lineup and 
+what counter-lineups are more effective. (3) For scouting purposes, our method of calculating lineup distance can be used to see which potential trades 
+result in a lineup most similar to the original lineup. Trading to keep a similar type of lineup may take the burden off of a coach who might otherwise have 
+to significantly alter their game-plan to suit their new lineup.
+
+After reviewing several articles on clustering attempts, we plan to use the following variables obtained from basketball-reference. We plan to use data from 
+the 2018-2019 season as this was the last complete season.
+
+Scoring attempts within 10ft per 100 possessions
+FG% within 10ft
+Dunk attempts per 100 possessions
+FGA per 100 + % of FGA which are dunks
+%2P assisted
+Scoring attempts between 10ft and 3P line per 100 possessions
+FG% between 10ft and 3P line
+Corner 3 attempts per 100
+Corner 3%
+3P attempts per 100
+3%
+%3P assisted
+FTr
+FT%
+AST per 100
+TOV%
+Height
+Weight
+Age
+BLK%
+STL%
+PF
+ORB%
+DRB%
