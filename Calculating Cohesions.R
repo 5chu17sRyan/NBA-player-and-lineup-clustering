@@ -1,11 +1,14 @@
+library(tidyverse)
 #loading in the file
-player_distance <- read.csv("C:/Users/18083/Desktop/202110/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv", row.names=1)
-
+player_distance <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv") %>%
+  select(-X)
 #####function definition#####
 #distance_matrix is a matrix of distances between the data points of players
 getCohesionMatrix <- function(distance_matrix){
+
   n = dim(distance_matrix)[1] #number of players
   A3=matrix(0,n,n)
+  
   for(x in 1:(n-1)){
     for(y in (x+1):n){
       
@@ -37,12 +40,13 @@ getCohesionMatrix <- function(distance_matrix){
       A3[y,conflict_points] = A3[y,conflict_points] + local_depth_y/num_conflict_points
     }
   }
-  rownames(A3)=row.names(distance_matrix)
-  colnames(A3)=row.names(distance_matrix)
+  rownames(A3)=colnames(distance_matrix)
+  colnames(A3)=colnames(distance_matrix)
   
   #Take calculate the average cohesions
   cohesion_matrix <- A3/(n-1) #The matrix of partitioned local depths (cohesions)
   return(cohesion_matrix)
 }
 
-getCohesionMatrix(player_distance)
+cohesion_matrix <- getCohesionMatrix(player_distance)
+write.csv(cohesion_matrix, "C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_cohesions.csv")
