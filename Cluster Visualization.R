@@ -36,3 +36,64 @@ components(graph, mode = "strong")
 # Plots vertices using Fruchterman-Reingold layout
 plot(layout_with_fr(graph))
 #Produces one big cloud of vetrices, no clear clusters :(
+
+PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
+
+##### K-MEANS
+library(mclust)
+set.seed(NULL)
+
+PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
+
+PCAs <- PCA_mean_imputted %>%
+  select(-X)
+
+library(bios2mds)
+
+sil_score <- sil.score(PCAs, nb.clus = c(2:20))
+
+sil_score_improvement <- NULL
+for(i in 2:20){
+  improvement <- 1 - ((1 - sil_score[i]) / (1 - sil_score[i-1]))
+  sil_score_improvement <- c(sil_score_improvement, improvement)
+}
+which.max(sil_score_improvement)
+
+kmeans_clust <- PCAs %>%
+  kmeans(15)
+
+Players <- PCA_mean_imputted %>%
+  mutate(kmclust = as.factor(kmeans_clust$cluster))
+
+ggplot(Players, aes(x=PC1, y=PC2, color = kmclust)) +
+  geom_point()
+
+##### Hierarchical Clustering #####
+player_distance <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv") %>%
+  select(-X) %>%
+  as.dist()
+
+view(player_distance)
+
+hclust <- hclust(player_distance)
+hclust15 <- cutree(hclust, k=15)
+
+Players <- Players %>%
+  mutate(hclust = as.factor(hclust15))
+
+ggplot(Players, aes(x=PC1, y=PC2, color = hclust)) +
+  geom_point()
+
+##### Minimax Linkage #####
+library(protoclust)
+
+minimax_clust <- protoclust(player_distance)
+minimax_clust_cut <- protocut(minimax_clust, k = 15)
+
+head(Players)
+
+Players <- Players %>%
+  mutate(mmclust = as.factor(minimax_clust_cut$cl))
+
+ggplot(Players, aes(x=PC1, y=PC2, color = mmclust)) +
+  geom_point()
