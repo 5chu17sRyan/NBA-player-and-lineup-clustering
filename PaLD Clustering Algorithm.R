@@ -50,3 +50,27 @@ calcCohesionThreshold <- function(cohesion_matrix){
   threshold <- avg_diag_entry/2
   return(threshold)
 }
+
+determineClusters <- function(edges){
+  # clusters <- data.frame(
+  #   cluster_num <- NULL,
+  #   player_names <- list(NULL)
+  # )
+  
+  first_players <- edges[,1]
+  second_players <- edges[,2]
+  
+  all_unique_players <- unique(rbind(first_players, second_players))
+  
+  num_vertices <- length(all_unique_players)
+  num_edges <- nrow(edges)
+  
+  vertices <- data.frame(
+    players = all_unique_players,
+    used = rep(FALSE, num_vertices)
+  )
+  
+  for(i in 1:num_vertices){
+    
+  }
+}
