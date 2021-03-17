@@ -2,6 +2,7 @@
 #https://www.statology.org/principal-components-analysis-in-r/
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
 
 #1. Remerge the data with additional information
 box_advanced <- read.csv("C:/Users/18083/Downloads/box_advanced.csv")
@@ -55,7 +56,9 @@ for(i in 1:ncol(basketball_data_mean_imp)) {
 results_mean_imp <- prcomp(basketball_data_mean_imp, scale=TRUE)
 results_mean_imp$rotation <- -1*results_mean_imp$rotation
 percentage_of_variance_2 <- results_mean_imp$sdev^2 / sum(results_mean_imp$sdev^2)
-plot(percentage_of_variance_2, xlim=c(3,23), ylim=c(0,0.1)) #five factors
+plot.new() 
+plot(percentage_of_variance_2, xlim=c(3,23), ylim=c(0,0.1), type="l", xlab="Component", ylab="Percentage of Variance", main="Percentage of Variance Explained by Each Component") #five factors
+
 
 write.csv(results_mean_imp$rotation, "C:/Users/18083/Desktop/202110/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_Components_mean_imputted.csv")
 
