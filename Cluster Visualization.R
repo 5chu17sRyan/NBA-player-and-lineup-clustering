@@ -17,6 +17,8 @@ player_cohesions <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports
   select(-X) %>%
   as.matrix()
 
+PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
+
 # Calculate cohesion threshold
 threshold <- calcCohesionThreshold(player_cohesions)
 
@@ -33,11 +35,20 @@ graph <- simplify(graph)
 components(graph, mode = "strong")
 #63 components but 464 out of 530 players are in one component next biggest component is 4
 
+#Determines communities within graph using different algorithms
+community_fast_greedy <- cluster_fast_greedy(graph) #66
+community_spectral <- cluster_leading_eigen(graph) #69
+community_betweeness <- cluster_edge_betweenness(graph) #99
+
+Players <- PCA_mean_imputted %>%
+  mutate(greedy_communities = as.factor(community_fast_greedy$membership)) %>%
+  mutate(spectral_communities = as.factor(community_spectral$membership)) %>%
+  mutate(betweenness_communities = as.factor(community_betweeness$membership)) %>%
+  mutate(connected_communities = as.factor(components(graph, mode = "strong")$membership))
+
 # Plots vertices using Fruchterman-Reingold layout
 plot(layout_with_fr(graph))
 #Produces one big cloud of vetrices, no clear clusters :(
-
-PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
 
 ##### K-MEANS
 library(mclust)
@@ -62,11 +73,8 @@ which.max(sil_score_improvement)
 kmeans_clust <- PCAs %>%
   kmeans(15)
 
-Players <- PCA_mean_imputted %>%
+Players <- Players %>%
   mutate(kmclust = as.factor(kmeans_clust$cluster))
-
-ggplot(Players, aes(x=PC1, y=PC2, color = kmclust)) +
-  geom_point()
 
 ##### Hierarchical Clustering #####
 player_distance <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv") %>%
@@ -81,9 +89,6 @@ hclust15 <- cutree(hclust, k=15)
 Players <- Players %>%
   mutate(hclust = as.factor(hclust15))
 
-ggplot(Players, aes(x=PC1, y=PC2, color = hclust)) +
-  geom_point()
-
 ##### Minimax Linkage #####
 library(protoclust)
 
@@ -94,6 +99,34 @@ head(Players)
 
 Players <- Players %>%
   mutate(mmclust = as.factor(minimax_clust_cut$cl))
+
+# Export Players with clusters #
+
+write.csv(Players, "C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/clustered_players.csv")
+
+##### Plotting #####
+
+view(Players)
+
+plot(layout_with_fr(graph))
+
+ggplot(Players, aes(x=PC2, y=PC3, color = greedy_communities)) +
+  geom_point()
+
+ggplot(Players, aes(x=PC1, y=PC2, color = spectral_communities)) +
+  geom_point()
+
+ggplot(Players, aes(x=PC1, y=PC3, color = betweenness_communities)) +
+  geom_point()
+
+ggplot(Players, aes(x=PC1, y=PC3, color = connected_communities)) +
+  geom_point()
+
+ggplot(Players, aes(x=PC1, y=PC2, color = kmclust)) +
+  geom_point()
+
+ggplot(Players, aes(x=PC1, y=PC2, color = hclust)) +
+  geom_point()
 
 ggplot(Players, aes(x=PC1, y=PC2, color = mmclust)) +
   geom_point()
