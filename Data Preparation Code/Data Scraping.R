@@ -2,8 +2,6 @@ library(rvest)
 library(purrr)
 library(tidyverse)
 
-
-
 ##### Per 100 #####
 
 url_2019_per_100 <- "https://www.basketball-reference.com/leagues/NBA_2019_per_poss.html"
