@@ -2,6 +2,8 @@ library(tidyverse)
 #loading in the file
 player_distance <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv") %>%
   select(-X)
+player_distance[1:5,1:5]
+
 #####function definition#####
 #distance_matrix is a matrix of distances between the data points of players
 getCohesionMatrix <- function(distance_matrix){

@@ -19,6 +19,8 @@ player_cohesions <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports
 
 PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
 
+head(PCA_mean_imputted)
+
 # Calculate cohesion threshold
 threshold <- calcCohesionThreshold(player_cohesions)
 
@@ -46,6 +48,16 @@ Players <- PCA_mean_imputted %>%
   mutate(betweenness_communities = as.factor(community_betweeness$membership)) %>%
   mutate(connected_communities = as.factor(components(graph, mode = "strong")$membership))
 
+view(Players)
+
+cluster1 <- Players %>%
+  filter(spectral_communities == 1) 
+
+cluster1[sample(nrow(cluster1), 30),]$X
+
+cluster1 %>%
+  summarise(PC1 = mean(PC1), PC2 = mean(PC2), PC3 = mean(PC3), PC4 = mean(PC4))
+
 # Plots vertices using Fruchterman-Reingold layout
 plot(layout_with_fr(graph))
 #Produces one big cloud of vetrices, no clear clusters :(
@@ -54,7 +66,8 @@ plot(layout_with_fr(graph))
 library(mclust)
 set.seed(NULL)
 
-PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
+PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv") %>%
+  select(-X.1)
 
 PCAs <- PCA_mean_imputted %>%
   select(-X)
@@ -68,23 +81,24 @@ for(i in 2:20){
   improvement <- 1 - ((1 - sil_score[i]) / (1 - sil_score[i-1]))
   sil_score_improvement <- c(sil_score_improvement, improvement)
 }
-which.max(sil_score_improvement)
+num_clusters <- which.max(sil_score_improvement)
 
 kmeans_clust <- PCAs %>%
-  kmeans(15)
+  kmeans(num_clusters)
 
 Players <- Players %>%
   mutate(kmclust = as.factor(kmeans_clust$cluster))
 
 ##### Hierarchical Clustering #####
-player_distance <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_distance.csv") %>%
+player_cohesions <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/player_cohesions.csv") %>%
   select(-X) %>%
-  as.dist()
+  as.dist() 
 
-view(player_distance)
+# Use lack of cohesion as a measure of distance. The more cohesive the closer two players are
+player_distance <- 1- player_cohesions
 
 hclust <- hclust(player_distance)
-hclust15 <- cutree(hclust, k=15)
+hclust15 <- cutree(hclust, k=num_clusters)
 
 Players <- Players %>%
   mutate(hclust = as.factor(hclust15))
@@ -93,12 +107,15 @@ Players <- Players %>%
 library(protoclust)
 
 minimax_clust <- protoclust(player_distance)
-minimax_clust_cut <- protocut(minimax_clust, k = 15)
+minimax_clust_cut <- protocut(minimax_clust, k = num_clusters)
 
-head(Players)
+view(minimax_clust_cut$cl)
 
 Players <- Players %>%
   mutate(mmclust = as.factor(minimax_clust_cut$cl))
+
+minimax_clust_cut$protos
+Players[minimax_clust_cut$protos,]
 
 # Export Players with clusters #
 
