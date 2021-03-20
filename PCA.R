@@ -57,7 +57,7 @@ results_mean_imp <- prcomp(basketball_data_mean_imp, scale=TRUE)
 results_mean_imp$rotation <- -1*results_mean_imp$rotation
 percentage_of_variance_2 <- results_mean_imp$sdev^2 / sum(results_mean_imp$sdev^2)
 plot.new() 
-plot(percentage_of_variance_2, xlim=c(3,23), ylim=c(0,0.1), type="l", xlab="Component", ylab="Percentage of Variance", main="Percentage of Variance Explained by Each Component") #five factors
+plot(percentage_of_variance_2, xlim=c(3,23), ylim=c(0,0.1), xlab="Component", ylab="Percentage of Variance", main="Percentage of Variance Explained by Each Component") #five factors
 
 
 write.csv(results_mean_imp$rotation, "C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_Components_mean_imputted.csv")
