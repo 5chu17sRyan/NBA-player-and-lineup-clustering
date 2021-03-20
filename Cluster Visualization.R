@@ -19,7 +19,9 @@ player_cohesions <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports
 
 PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv")
 
-head(PCA_mean_imputted)
+
+
+tail(PCA_mean_imputted)
 
 # Calculate cohesion threshold
 threshold <- calcCohesionThreshold(player_cohesions)
@@ -44,19 +46,31 @@ community_betweeness <- cluster_edge_betweenness(graph) #99
 
 Players <- PCA_mean_imputted %>%
   mutate(greedy_communities = as.factor(community_fast_greedy$membership)) %>%
-  mutate(spectral_communities = as.factor(community_spectral$membership)) %>%
-  mutate(betweenness_communities = as.factor(community_betweeness$membership)) %>%
-  mutate(connected_communities = as.factor(components(graph, mode = "strong")$membership))
+  #mutate(spectral_communities = as.factor(community_spectral$membership)) %>%
+  mutate(betweenness_communities = as.factor(community_betweeness$membership))
+  #mutate(connected_communities = as.factor(components(graph, mode = "strong")$membership))
 
 view(Players)
 
 cluster1 <- Players %>%
-  filter(spectral_communities == 1) 
+  filter(hclust == 3) 
+
+nrow(cluster1)
 
 cluster1[sample(nrow(cluster1), 30),]$X
 
 cluster1 %>%
-  summarise(PC1 = mean(PC1), PC2 = mean(PC2), PC3 = mean(PC3), PC4 = mean(PC4))
+  summarise(PC1 = mean(PC1), PC2 = mean(PC2), PC3 = mean(PC3), PC4 = mean(PC4), PC5 = mean(PC5))
+
+Players[,2:6] <- scale(Players[,2:6])
+
+cluster1 <- Players %>%
+  filter(betweenness_communities == 4)
+
+cluster1 %>%
+  summarise(PC1 = mean(PC1), PC2 = mean(PC2), PC3 = mean(PC3), PC4 = mean(PC4), PC5 = mean(PC5))
+
+
 
 # Plots vertices using Fruchterman-Reingold layout
 plot(layout_with_fr(graph))
@@ -65,9 +79,6 @@ plot(layout_with_fr(graph))
 ##### K-MEANS
 library(mclust)
 set.seed(NULL)
-
-PCA_mean_imputted <- read.csv("C:/Users/ryans/OneDrive/Desktop/Spring 2021/Sports Analytics/Basketball/NBA-player-and-lineup-clustering/PCA_mean_imputted.csv") %>%
-  select(-X.1)
 
 PCAs <- PCA_mean_imputted %>%
   select(-X)
