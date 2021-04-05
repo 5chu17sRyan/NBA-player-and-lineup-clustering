@@ -53,13 +53,13 @@ Players <- PCA_mean_imputted %>%
 view(Players)
 
 cluster1 <- Players %>%
-  filter(hclust == 3) 
+  filter(mmclust == 5) 
 
 nrow(cluster1)
 
 cluster1[sample(nrow(cluster1), 30),]$X
 
-cluster1 %>%
+  cluster1 %>%
   summarise(PC1 = mean(PC1), PC2 = mean(PC2), PC3 = mean(PC3), PC4 = mean(PC4), PC5 = mean(PC5))
 
 Players[,2:6] <- scale(Players[,2:6])
@@ -126,7 +126,7 @@ Players <- Players %>%
   mutate(mmclust = as.factor(minimax_clust_cut$cl))
 
 minimax_clust_cut$protos
-Players[minimax_clust_cut$protos,]
+Players[minimax_clust_cut$protos,]$X
 
 # Export Players with clusters #
 
